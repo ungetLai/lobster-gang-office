@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lobster Gang Office - Nexora 🦞</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        #header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+            z-index: 10;
+        }
+
+        #header h1 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: #ff4d4d;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        #game-container {
+            flex-grow: 1;
+            position: relative;
+            background: radial-gradient(circle, #2c3e50 0%, #000000 100%);
+            cursor: grab;
+        }
+
+        #game-canvas {
+            image-rendering: pixelated;
+        }
+
+        #ui-overlay {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 15px;
+            pointer-events: none;
+            backdrop-filter: blur(5px);
+        }
+
+        .log-entry {
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+            color: #aaa;
+            border-left: 2px solid #ff4d4d;
+            padding-left: 8px;
+        }
+
+        .log-entry span {
+            color: #00ff00;
+        }
+
+        #status-bar {
+            position: absolute;
+            top: 60px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <h1>🦞 Lobster Gang Office</h1>
+        <div id="controls">
+            <span>[Nexora 🦞] 系統運行中...</span>
+        </div>
+    </div>
+
+    <div id="game-container">
+        <canvas id="game-canvas"></canvas>
+        <div id="status-bar">
+            成員在線: <span id="online-count">4</span> | 目前區域: 主辦公室
+        </div>
+        <div id="ui-overlay">
+            <h3 style="margin-top: 0; font-size: 0.9rem; color: #ff4d4d;">系統日誌 (Activity Log)</h3>
+            <div id="logs">
+                <div class="log-entry"><span>10:13:49</span> [Nexora] 啟動龍蝦辦公室系統...</div>
+                <div class="log-entry"><span>10:14:00</span> [System] 載入等軸測地圖中...</div>
+                <div class="log-entry"><span>10:14:10</span> [Nexora] 初始化成員 AI 位元...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
