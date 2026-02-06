@@ -10,13 +10,28 @@ let offset = { x: 0, y: 0 };
 let isDragging = false;
 let lastMousePos = { x: 0, y: 0 };
 
-// 模擬成員資料
+// 模擬成員資料 (可透過 sync_agents.py 動態更新)
 const members = [
-    { name: 'Nexora 🦞', x: 2, y: 2, color: '#ff4d4d', role: '幫主' },
-    { name: 'Writer', x: 5, y: 3, color: '#4d94ff', role: '文案' },
-    { name: 'N8N小幫手', x: 1, y: 6, color: '#4dff88', role: '自動化' },
-    { name: 'Alex', x: 7, y: 2, color: '#f0ff4d', role: '工程師' }
+    { id: 'main', name: 'Nexora 🦞', x: 2, y: 2, color: '#ff4d4d', role: '幫主', status: 'online' },
+    { id: 'sub-writer', name: 'Writer', x: 5, y: 3, color: '#4d94ff', role: '文案代理', status: 'idle' },
+    { id: 'sub-n8n', name: 'N8N小幫手', x: 1, y: 6, color: '#4dff88', role: '自動化代理', status: 'offline' },
+    { id: 'sub-alex', name: 'Alex', x: 7, y: 2, color: '#f0ff4d', role: '系統開發', status: 'idle' }
 ];
+
+async function updateAgentStatus() {
+    try {
+        // 這裡預留給未來串接真實 API (例如 OpenClaw API)
+        // 目前先模擬從本地 agents.json 讀取
+        const response = await fetch('agents.json');
+        if (response.ok) {
+            const data = await response.json();
+            // 更新成員座標或狀態...
+        }
+    } catch (e) {
+        // 如果沒有 agents.json 則維持現狀
+    }
+}
+setInterval(updateAgentStatus, 5000);
 
 function resize() {
     canvas.width = window.innerWidth;
