@@ -25,9 +25,9 @@ shadowledgerImg.src = 'shadowledger.png';
 // 模擬成員資料
 const members = [
     { id: 'main', name: 'Nexora 🦞', x: 2, y: 3.2, color: '#ff4d4d', role: '龍蝦幫幫主', status: 'online', isBoss: true },
-    { id: 'looploom', name: 'LoopLoom 🕷️', x: 6, y: 3.5, color: '#ff0000', role: '情報分析師', status: 'online', isCustom: true, img: looploomImg },
-    { id: 'signalscout', name: 'SignalScout 🦎', x: 4.5, y: 1.5, color: '#00ff00', role: '專案企劃大師', status: 'online', isCustom: true, img: signalscoutImg },
-    { id: 'shadowledger', name: 'ShadowLedger 🦉', x: 8, y: 1.2, color: '#ffa500', role: '財務大總管', status: 'online', isCustom: true, img: shadowledgerImg }
+    { id: 'looploom', name: 'LoopLoom 🕷️', x: 6.5, y: 6.5, color: '#ff0000', role: '專案開發專家', status: 'online', isCustom: true, img: looploomImg },
+    { id: 'signalscout', name: 'SignalScout 🦎', x: 5.5, y: 5.5, color: '#00ff00', role: '專案企劃大師', status: 'online', isCustom: true, img: signalscoutImg },
+    { id: 'shadowledger', name: 'ShadowLedger 🦉', x: 7.5, y: 7.5, color: '#ffa500', role: '財務大總管', status: 'online', isCustom: true, img: shadowledgerImg }
 ];
 
 function resize() {
@@ -135,7 +135,7 @@ function addLog(msg) {
 setInterval(() => {
     const member = members[Math.floor(Math.random() * members.length)];
     const bossActions = ['正在喝著頂級藍山咖啡', '正在審閱龍蝦幫年度計畫', '盯著螢幕運籌帷幄', '正在考慮幫成員加薪'];
-    const spiderActions = ['正在編織複雜的資訊網', '在角落靜靜觀察數據流量', '正在修復系統漏洞', '捕獲了一個潛在的資安威脅'];
+    const spiderActions = ['正在重構核心代碼', '優化資料庫查詢性能', '部署新的微服務單元', '正在進行壓力測試'];
     const chameleonActions = ['正在調整專案排程', '觀察市場趨勢中...', '正在優化團隊工作流', '擬定下一階段開發計畫'];
     const owlActions = ['正在核對龍蝦金庫帳目', '計算專案投資回報率', '正在優化團隊預算分配', '盯著股市盤後數據'];
     const actions = member.isBoss ? bossActions : (member.id === 'looploom' ? spiderActions : (member.id === 'signalscout' ? chameleonActions : (member.id === 'shadowledger' ? owlActions : ['正在巡視龍蝦牆', '正在沙發區休息', '正在檢查自動化腳本', '正在測試新功能'])));
