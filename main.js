@@ -301,9 +301,9 @@ window.addEventListener('mousemove', (e) => {
 });
 
 function addLog(msg, category = 'online') {
-    // 定義哪些類別屬於「在線動態」分頁
-    const isOnlineActivity = category === 'online' || category === 'command';
-    const container = isOnlineActivity ? logsOnline : logsOffline;
+    // 只有純「離線娛樂」日誌會被分到離線分頁，給予休息夥伴零壓力的空間
+    const isOfflineEntertainment = category === 'offline';
+    const container = isOfflineEntertainment ? logsOffline : logsOnline;
     
     if (!container) return;
     
