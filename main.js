@@ -301,12 +301,14 @@ window.addEventListener('mousemove', (e) => {
 });
 
 function addLog(msg, category = 'online') {
-    const container = category === 'online' ? logsOnline : logsOffline;
+    // 定義哪些類別屬於「在線動態」分頁
+    const isOnlineActivity = category === 'online' || category === 'command';
+    const container = isOnlineActivity ? logsOnline : logsOffline;
+    
     if (!container) return;
     
     const div = document.createElement('div');
     div.className = `log-entry ${category}`;
-    if (category === 'command') div.classList.add('command');
     const time = new Date().toLocaleTimeString('zh-TW', { hour12: false });
     div.innerHTML = `<span>${time}</span> ${msg}`;
     
