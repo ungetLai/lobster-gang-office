@@ -5,8 +5,7 @@ const PORT = process.env.PORT || 3000;
 
 const fs = require('fs').promises;
 
-// 提供靜態檔案服務
-app.use(express.static(path.join(__dirname, './')));
+app.use(express.json());
 
 // 預留 API 介面：未來可以用來動態寫入 agents.json
 app.get('/api/status', async (req, res) => {
@@ -23,6 +22,20 @@ app.get('/api/status', async (req, res) => {
             'shadowledger': 'offline'
         });
     }
+});
+
+// 新增：接收指令 API
+let lastCommand = null;
+
+app.post('/api/command', (req, res) => {
+    const { command, target } = req.body;
+    console.log(`🦞 Received command: ${command} for ${target}`);
+    lastCommand = { command, target, timestamp: Date.now() };
+    res.json({ success: true });
+});
+
+app.get('/api/command', (req, res) => {
+    res.json(lastCommand);
 });
 
 app.listen(PORT, () => {

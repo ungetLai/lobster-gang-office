@@ -82,30 +82,6 @@ function showSpeech(memberId, text, duration = 3000) {
     }, duration);
 }
 
-// 暴露給外部或測試用的指令傳達函數
-window.receiveBossCommand = function(targetMemberId = 'looploom') {
-    const boss = members.find(m => m.isBoss);
-    const target = members.find(m => m.id === targetMemberId);
-    
-    // 1. 幫主接獲指示
-    addLog(`[${boss.name}] 接獲首領的指示`, 'command');
-    showSpeech(boss.id, '📢 接獲首領指令！', 2000);
-
-    // 2. 延遲後指派給子代理
-    setTimeout(() => {
-        if (target) {
-            addLog(`[${boss.name}] 將首領的指示指派給 ${target.name}`, 'command');
-            showSpeech(boss.id, `👉 ${target.name}，交給你了！`, 2000);
-            
-            // 3. 子代理接獲任務
-            setTimeout(() => {
-                showSpeech(target.id, '🫡 收到，立即執行！', 2500);
-                addLog(`[${target.name}] 開始執行首領指示任務...`, 'online');
-            }, 2500);
-        }
-    }, 2500);
-};
-
 function updateOnlineCount() {
     const onlineCount = members.filter(m => m.status === 'online').length;
     const onlineCountEl = document.getElementById('online-count');
@@ -139,6 +115,48 @@ async function fetchMemberStatus() {
 
 // 每 10 秒檢查一次狀態
 setInterval(fetchMemberStatus, 10000);
+
+let lastHandledCommandTime = 0;
+
+async function fetchCommands() {
+    try {
+        const response = await fetch('/api/command');
+        const data = await response.json();
+        if (data && data.timestamp > lastHandledCommandTime) {
+            lastHandledCommandTime = data.timestamp;
+            window.receiveBossCommand(data.target || 'looploom', data.command);
+        }
+    } catch (err) {
+        console.error('Failed to fetch commands:', err);
+    }
+}
+
+// 每 3 秒檢查一次指令
+setInterval(fetchCommands, 3000);
+
+// 修改 receiveBossCommand 以接受自定義指令文本
+window.receiveBossCommand = function(targetMemberId = 'looploom', commandText = '接獲首領指令！') {
+    const boss = members.find(m => m.isBoss);
+    const target = members.find(m => m.id === targetMemberId);
+    
+    // 1. 幫主接獲指示
+    addLog(`[${boss.name}] 接獲首領的指示: ${commandText}`, 'command');
+    showSpeech(boss.id, `📢 ${commandText}`, 3000);
+
+    // 2. 延遲後指派給子代理
+    setTimeout(() => {
+        if (target) {
+            addLog(`[${boss.name}] 將首領的指示指派給 ${target.name}`, 'command');
+            showSpeech(boss.id, `👉 ${target.name}，交給你了！`, 2000);
+            
+            // 3. 子代理接獲任務
+            setTimeout(() => {
+                showSpeech(target.id, '🫡 收到，立即執行！', 2500);
+                addLog(`[${target.name}] 開始執行首領指示任務...`, 'online');
+            }, 2500);
+        }
+    }, 2500);
+};
 
 function resize() {
     canvas.width = window.innerWidth;
