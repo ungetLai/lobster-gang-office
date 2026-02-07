@@ -25,9 +25,9 @@ shadowledgerImg.src = 'shadowledger.png';
 // 模擬成員資料
 const members = [
     { id: 'main', name: 'Nexora 🦞', x: 2, y: 3.2, color: '#ff4d4d', role: '龍蝦幫幫主', status: 'online', isBoss: true },
-    { id: 'looploom', name: 'LoopLoom 🕷️', x: 6.5, y: 6.5, color: '#ff0000', role: '專案開發專家', status: 'online', isCustom: true, img: looploomImg },
-    { id: 'signalscout', name: 'SignalScout 🦎', x: 5.5, y: 5.5, color: '#00ff00', role: '專案企劃大師', status: 'online', isCustom: true, img: signalscoutImg },
-    { id: 'shadowledger', name: 'ShadowLedger 🦉', x: 7.5, y: 7.5, color: '#ffa500', role: '財務大總管', status: 'online', isCustom: true, img: shadowledgerImg }
+    { id: 'looploom', name: 'LoopLoom 🕷️', x: 2, y: 9, color: '#ff0000', role: '專案開發專家', status: 'online', isCustom: true, img: looploomImg },
+    { id: 'signalscout', name: 'SignalScout 🦎', x: 2.3, y: 6.3, color: '#00ff00', role: '專案企劃大師', status: 'online', isCustom: true, img: signalscoutImg },
+    { id: 'shadowledger', name: 'ShadowLedger 🦉', x: 6, y: 9, color: '#ffa500', role: '財務大總管', status: 'online', isCustom: true, img: shadowledgerImg }
 ];
 
 function resize() {
@@ -52,8 +52,8 @@ function drawMember(member) {
         ctx.drawImage(nexoraImg, screenX - bossW / 2, screenY - bossH + 40, bossW, bossH);
     } else if (member.isCustom && member.img.complete) {
         // 繪製自定義成員 (如 LoopLoom)
-        const charW = 100;
-        const charH = 100;
+        const charW = 150;
+        const charH = 150;
         ctx.drawImage(member.img, screenX - charW / 2, screenY - charH + 20, charW, charH);
     } else {
         // 繪製其他成員 (像素風小人)
@@ -77,13 +77,13 @@ function drawMember(member) {
     ctx.textAlign = 'center';
     ctx.shadowBlur = 4;
     ctx.shadowColor = 'black';
-    const labelYOffset = member.isBoss ? 165 : (member.isCustom ? 85 : 60);
+    const labelYOffset = member.isBoss ? 165 : (member.isCustom ? 125 : 80);
     ctx.fillText(member.name, screenX, screenY - labelYOffset);
     ctx.shadowBlur = 0;
-    
+
     ctx.fillStyle = member.isBoss ? 'rgba(255, 215, 0, 0.9)' : (member.id === 'looploom' ? 'rgba(138, 43, 226, 0.8)' : (member.id === 'signalscout' ? 'rgba(34, 139, 34, 0.8)' : (member.id === 'shadowledger' ? 'rgba(255, 140, 0, 0.8)' : 'rgba(255, 77, 77, 0.8)')));
     const textWidth = ctx.measureText(member.role).width;
-    ctx.fillRect(screenX - (textWidth/2) - 5, screenY - labelYOffset + 5, textWidth + 10, 16);
+    ctx.fillRect(screenX - (textWidth / 2) - 5, screenY - labelYOffset + 5, textWidth + 10, 16);
     ctx.fillStyle = member.isBoss ? '#000' : '#fff';
     ctx.font = 'bold 10px "Segoe UI"';
     ctx.fillText(member.role, screenX, screenY - labelYOffset + 17);
@@ -140,7 +140,7 @@ setInterval(() => {
     const owlActions = ['正在核對龍蝦金庫帳目', '計算專案投資回報率', '正在優化團隊預算分配', '盯著股市盤後數據'];
     const actions = member.isBoss ? bossActions : (member.id === 'looploom' ? spiderActions : (member.id === 'signalscout' ? chameleonActions : (member.id === 'shadowledger' ? owlActions : ['正在巡視龍蝦牆', '正在沙發區休息', '正在檢查自動化腳本', '正在測試新功能'])));
     addLog(`[${member.name}] ${actions[Math.floor(Math.random() * actions.length)]}`);
-    
+
     if (!member.isBoss && !member.isCustom) {
         member.x += (Math.random() > 0.5 ? 0.2 : -0.2);
         member.y += (Math.random() > 0.5 ? 0.2 : -0.2);
