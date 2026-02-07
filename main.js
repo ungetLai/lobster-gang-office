@@ -32,8 +32,8 @@ shadowledgerOfflineImg.src = 'shadowledger-offline.jpg';
 const members = [
     { id: 'main', name: 'Nexora 🦞', x: 2, y: 3.2, color: '#ff4d4d', role: '龍蝦幫幫主', status: 'online', isBoss: true },
     { id: 'looploom', name: 'LoopLoom 🕷️', x: 2, y: 9, color: '#ff0000', role: '專案開發專家', status: 'online', isCustom: true, img: looploomImg },
-    { id: 'signalscout', name: 'SignalScout 🦎', x: 2.3, y: 6.3, color: '#00ff00', role: '專案企劃大師', status: 'offline', isCustom: true, img: signalscoutImg, offlineImg: signalscoutOfflineImg },
-    { id: 'shadowledger', name: 'ShadowLedger 🦉', x: 6, y: 9, color: '#ffa500', role: '財務大總管', status: 'offline', isCustom: true, img: shadowledgerImg, offlineImg: shadowledgerOfflineImg }
+    { id: 'signalscout', name: 'SignalScout  Lizard', x: 2.3, y: 6.3, color: '#00ff00', role: '專案企劃大師', status: 'offline', isCustom: true, img: signalscoutImg, offlineImg: signalscoutOfflineImg, offlinePos: { x: 2.3, y: 9 } },
+    { id: 'shadowledger', name: 'ShadowLedger Owl', x: 6, y: 9, color: '#ffa500', role: '財務大總管', status: 'offline', isCustom: true, img: shadowledgerImg, offlineImg: shadowledgerOfflineImg }
 ];
 
 function updateOnlineCount() {
@@ -56,11 +56,20 @@ window.addEventListener('resize', resize);
 resize();
 
 function drawMember(member) {
-    // 配合背景圖的等軸角度進行偏移計算
-    const screenX = (member.x - member.y) * 50 + offset.x;
-    const screenY = (member.x + member.y) * 25 + offset.y - 120;
-
     const isOnline = member.status === 'online';
+    
+    // 計算繪製座標
+    let drawX = member.x;
+    let drawY = member.y;
+    
+    if (!isOnline && member.offlinePos) {
+        drawX = member.offlinePos.x;
+        drawY = member.offlinePos.y;
+    }
+
+    // 配合背景圖的等軸角度進行偏移計算
+    const screenX = (drawX - drawY) * 50 + offset.x;
+    const screenY = (drawX + drawY) * 25 + offset.y - 120;
 
     // 繪製離線半透明效果
     if (!isOnline) {
