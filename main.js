@@ -26,15 +26,24 @@ shadowledgerImg.src = 'shadowledger.png';
 const members = [
     { id: 'main', name: 'Nexora 🦞', x: 2, y: 3.2, color: '#ff4d4d', role: '龍蝦幫幫主', status: 'online', isBoss: true },
     { id: 'looploom', name: 'LoopLoom 🕷️', x: 2, y: 9, color: '#ff0000', role: '專案開發專家', status: 'online', isCustom: true, img: looploomImg },
-    { id: 'signalscout', name: 'SignalScout 🦎', x: 2.3, y: 6.3, color: '#00ff00', role: '專案企劃大師', status: 'online', isCustom: true, img: signalscoutImg },
-    { id: 'shadowledger', name: 'ShadowLedger 🦉', x: 6, y: 9, color: '#ffa500', role: '財務大總管', status: 'online', isCustom: true, img: shadowledgerImg }
+    { id: 'signalscout', name: 'SignalScout 🦎', x: 2.3, y: 6.3, color: '#00ff00', role: '專案企劃大師', status: 'offline', isCustom: true, img: signalscoutImg },
+    { id: 'shadowledger', name: 'ShadowLedger 🦉', x: 6, y: 9, color: '#ffa500', role: '財務大總管', status: 'offline', isCustom: true, img: shadowledgerImg }
 ];
+
+function updateOnlineCount() {
+    const onlineCount = members.filter(m => m.status === 'online').length;
+    const onlineCountEl = document.getElementById('online-count');
+    if (onlineCountEl) {
+        onlineCountEl.textContent = onlineCount;
+    }
+}
 
 function resize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     offset.x = canvas.width / 2;
     offset.y = canvas.height / 2;
+    updateOnlineCount();
 }
 
 window.addEventListener('resize', resize);
@@ -44,6 +53,14 @@ function drawMember(member) {
     // 配合背景圖的等軸角度進行偏移計算
     const screenX = (member.x - member.y) * 50 + offset.x;
     const screenY = (member.x + member.y) * 25 + offset.y - 120;
+
+    const isOnline = member.status === 'online';
+
+    // 繪製離線半透明效果
+    if (!isOnline) {
+        ctx.globalAlpha = 0.5;
+        ctx.filter = 'grayscale(100%)';
+    }
 
     if (member.isBoss && nexoraImg.complete) {
         // 繪製幫主專屬辦公圖案 (主管位，放大兩倍且去背)
@@ -71,6 +88,10 @@ function drawMember(member) {
         ctx.fillRect(screenX + 3, screenY - 32, 2, 2);
     }
 
+    // 重置濾鏡
+    ctx.globalAlpha = 1.0;
+    ctx.filter = 'none';
+
     // 名字與角色標籤
     ctx.fillStyle = '#fff';
     ctx.font = 'bold 14px "Segoe UI"';
@@ -78,6 +99,16 @@ function drawMember(member) {
     ctx.shadowBlur = 4;
     ctx.shadowColor = 'black';
     const labelYOffset = member.isBoss ? 165 : (member.isCustom ? 125 : 80);
+
+    // 繪製狀態小圓點
+    const statusColor = isOnline ? '#00ff00' : '#888';
+    const nameWidth = ctx.measureText(member.name).width;
+    ctx.fillStyle = statusColor;
+    ctx.beginPath();
+    ctx.arc(screenX - (nameWidth / 2) - 15, screenY - labelYOffset - 5, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#fff';
     ctx.fillText(member.name, screenX, screenY - labelYOffset);
     ctx.shadowBlur = 0;
 
