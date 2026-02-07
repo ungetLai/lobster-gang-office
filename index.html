@@ -50,25 +50,91 @@
             position: absolute;
             bottom: 20px;
             right: 20px;
-            width: 300px;
-            background: rgba(0, 0, 0, 0.7);
+            width: 320px;
+            background: rgba(0, 0, 0, 0.85);
             border: 1px solid #444;
             border-radius: 8px;
+            padding: 0;
+            pointer-events: auto;
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            max-height: 400px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .log-header {
+            display: flex;
+            background: rgba(255, 77, 77, 0.1);
+            border-bottom: 1px solid #333;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .log-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.85rem;
+            cursor: pointer;
+            color: #888;
+            transition: all 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+
+        .log-tab.active {
+            color: #ff4d4d;
+            border-bottom-color: #ff4d4d;
+            background: rgba(255, 77, 77, 0.05);
+        }
+
+        .log-tab:hover:not(.active) {
+            color: #bbb;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .log-content {
             padding: 15px;
-            pointer-events: none;
-            backdrop-filter: blur(5px);
+            overflow-y: auto;
+            flex-grow: 1;
+            height: 300px;
+        }
+
+        .log-container {
+            display: none;
+        }
+
+        .log-container.active {
+            display: block;
         }
 
         .log-entry {
             font-size: 0.8rem;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            color: #ccc;
+            border-left: 2px solid #444;
+            padding-left: 10px;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(5px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .log-entry.online {
+            border-left-color: #00ff00;
+        }
+
+        .log-entry.system {
+            border-left-color: #ff4d4d;
             color: #aaa;
-            border-left: 2px solid #ff4d4d;
-            padding-left: 8px;
+            font-style: italic;
         }
 
         .log-entry span {
-            color: #00ff00;
+            color: #666;
+            margin-right: 5px;
+            font-family: monospace;
         }
 
         #status-bar {
@@ -93,14 +159,20 @@
     <div id="game-container">
         <canvas id="game-canvas"></canvas>
         <div id="status-bar">
-            成員在線: <span id="online-count">4</span> | 目前區域: 龍蝦幫秘密基地
+            成員在線: <span id="online-count">0</span> | 目前區域: 龍蝦幫秘密基地
         </div>
         <div id="ui-overlay">
-            <h3 style="margin-top: 0; font-size: 0.9rem; color: #ff4d4d;">系統日誌 (Activity Log)</h3>
-            <div id="logs">
-                <div class="log-entry"><span>10:13:49</span> [Nexora] 啟動龍蝦辦公室系統...</div>
-                <div class="log-entry"><span>10:14:00</span> [System] 載入等軸測地圖中...</div>
-                <div class="log-entry"><span>10:14:10</span> [Nexora] 初始化成員 AI 位元...</div>
+            <div class="log-header">
+                <div class="log-tab active" onclick="switchTab('online')">在線動態</div>
+                <div class="log-tab" onclick="switchTab('offline')">系統/離線</div>
+            </div>
+            <div id="log-content" class="log-content">
+                <div id="logs-online" class="log-container active">
+                    <div class="log-entry system"><span>[System]</span> 正在連接龍蝦幫加密通道...</div>
+                </div>
+                <div id="logs-offline" class="log-container">
+                    <div class="log-entry system"><span>[System]</span> 離線日誌已就緒。</div>
+                </div>
             </div>
         </div>
     </div>

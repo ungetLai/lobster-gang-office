@@ -1,6 +1,7 @@
 const canvas = document.getElementById('game-canvas');
 const ctx = canvas.getContext('2d');
-const logsContainer = document.getElementById('logs');
+const logsOnline = document.getElementById('logs-online');
+const logsOffline = document.getElementById('logs-offline');
 
 let offset = { x: 0, y: 0 };
 let isDragging = false;
@@ -42,6 +43,21 @@ const members = [
     { id: 'shadowledger', name: 'ShadowLedger 🦉', x: 6, y: 9, color: '#ffa500', role: '財務大總管', status: 'offline', isCustom: true, img: shadowledgerImg, offlineImg: shadowledgerOfflineImg, offlinePos: { x: 9, y: 4 } },
 ];
 
+function switchTab(tab) {
+    document.querySelectorAll('.log-tab').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.log-container').forEach(el => el.classList.remove('active'));
+    
+    if (tab === 'online') {
+        document.querySelector('.log-tab:nth-child(1)').classList.add('active');
+        logsOnline.classList.add('active');
+    } else {
+        document.querySelector('.log-tab:nth-child(2)').classList.add('active');
+        logsOffline.classList.add('active');
+    }
+}
+
+window.switchTab = switchTab;
+
 function updateOnlineCount() {
     const onlineCount = members.filter(m => m.status === 'online').length;
     const onlineCountEl = document.getElementById('online-count');
@@ -59,7 +75,8 @@ async function fetchMemberStatus() {
         members.forEach(member => {
             if (statuses[member.id] && member.status !== statuses[member.id]) {
                 member.status = statuses[member.id];
-                addLog(`[System] ${member.name} 狀態更新為 ${member.status}`);
+                const statusText = member.status === 'online' ? '🟢 上線' : '🔴 離線';
+                addLog(`[System] ${member.name} ${statusText}`, 'system');
                 changed = true;
             }
         });
@@ -209,25 +226,57 @@ window.addEventListener('mousemove', (e) => {
     }
 });
 
-function addLog(msg) {
-    if (!logsContainer) return;
+function addLog(msg, category = 'online') {
+    const container = category === 'online' ? logsOnline : logsOffline;
+    if (!container) return;
+    
     const div = document.createElement('div');
-    div.className = 'log-entry';
+    div.className = `log-entry ${category}`;
     const time = new Date().toLocaleTimeString('zh-TW', { hour12: false });
     div.innerHTML = `<span>${time}</span> ${msg}`;
-    logsContainer.prepend(div);
+    
+    container.prepend(div);
+    
+    // 限制日誌數量
+    if (container.children.length > 50) {
+        container.removeChild(container.lastChild);
+    }
 }
 
 setInterval(() => {
+    const onlineMembers = members.filter(m => m.status === 'online');
+    const offlineMembers = members.filter(m => m.status !== 'online');
+    
+    // 隨機挑選一名成員
     const member = members[Math.floor(Math.random() * members.length)];
-    const bossActions = ['正在喝著頂級藍山咖啡', '正在審閱龍蝦幫年度計畫', '盯著螢幕運籌帷幄', '正在考慮幫成員加薪'];
-    const spiderActions = ['正在重構核心代碼', '優化資料庫查詢性能', '部署新的微服務單元', '正在進行壓力測試'];
-    const chameleonActions = ['正在調整專案排程', '觀察市場趨勢中...', '正在優化團隊工作流', '擬定下一階段開發計畫'];
-    const owlActions = ['正在核對龍蝦金庫帳目', '計算專案投資回報率', '正在優化團隊預算分配', '盯著股市盤後數據'];
-    const actions = member.isBoss ? bossActions : (member.id === 'looploom' ? spiderActions : (member.id === 'signalscout' ? chameleonActions : (member.id === 'shadowledger' ? owlActions : ['正在巡視龍蝦牆', '正在沙發區休息', '正在檢查自動化腳本', '正在測試新功能'])));
-    addLog(`[${member.name}] ${actions[Math.floor(Math.random() * actions.length)]}`);
+    if (!member) return;
 
-    if (!member.isBoss && !member.isCustom) {
+    const isOnline = member.status === 'online';
+    
+    if (isOnline) {
+        // 在線成員：工作訊息
+        const bossActions = ['正在喝著頂級藍山咖啡', '正在審閱龍蝦幫年度計畫', '盯著螢幕運籌帷幄', '正在考慮幫成員加薪'];
+        const spiderActions = ['正在重構核心代碼', '優化資料庫查詢性能', '部署新的微服務單元', '正在進行壓力測試'];
+        const chameleonActions = ['正在調整專案排程', '觀察市場趨勢中...', '正在優化團隊工作流', '擬定下一階段開發計畫'];
+        const owlActions = ['正在核對龍蝦金庫帳目', '計算專案投資回報率', '正在優化團隊預算分配', '盯著股市盤後數據'];
+        const actions = member.isBoss ? bossActions : (member.id === 'looploom' ? spiderActions : (member.id === 'signalscout' ? chameleonActions : (member.id === 'shadowledger' ? owlActions : ['正在巡視龍蝦牆', '正在沙發區休息', '正在檢查自動化腳本', '正在測試新功能'])));
+        addLog(`[${member.name}] ${actions[Math.floor(Math.random() * actions.length)]}`, 'online');
+    } else {
+        // 離線成員：輕鬆俏皮的訊息
+        const chillMessages = [
+            '下週該去哪裡玩呢？',
+            '這遊戲好難啊啊～',
+            '想吃門口那家拉麵了...',
+            '咖啡機是不是該洗了？',
+            '今天天氣真不錯，適合發呆。',
+            '有人要一起訂珍奶嗎？',
+            '剛才好像看到龍蝦在飛...',
+            '睡個午覺應該沒人發現吧？'
+        ];
+        addLog(`[${member.name}] (遠端) ${chillMessages[Math.floor(Math.random() * chillMessages.length)]}`, 'offline');
+    }
+
+    if (isOnline && !member.isBoss && !member.isCustom) {
         member.x += (Math.random() > 0.5 ? 0.2 : -0.2);
         member.y += (Math.random() > 0.5 ? 0.2 : -0.2);
         member.x = Math.max(0, Math.min(8, member.x));
