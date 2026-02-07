@@ -11,11 +11,11 @@ const bgImage = new Image();
 bgImage.src = 'office-bg.jpg';
 
 const nexoraImg = new Image();
-nexoraImg.src = 'nexora-boss.jpg';
+nexoraImg.src = 'nexora-boss.png';
 
 // 模擬成員資料
 const members = [
-    { id: 'main', name: 'Nexora 🦞', x: 2, y: 3.5, color: '#ff4d4d', role: '龍蝦幫幫主', status: 'online', isBoss: true },
+    { id: 'main', name: 'Nexora 🦞', x: 2, y: 3.2, color: '#ff4d4d', role: '龍蝦幫幫主', status: 'online', isBoss: true },
     { id: 'sub-writer', name: 'Writer', x: 4.5, y: 4, color: '#4d94ff', role: '文案代理', status: 'idle' },
     { id: 'sub-n8n', name: 'N8N小幫手', x: 1, y: 6, color: '#4dff88', role: '自動化代理', status: 'offline' },
     { id: 'sub-alex', name: 'Alex', x: 6, y: 2, color: '#f0ff4d', role: '系統開發', status: 'idle' }
@@ -37,10 +37,10 @@ function drawMember(member) {
     const screenY = (member.x + member.y) * 25 + offset.y - 120;
 
     if (member.isBoss && nexoraImg.complete) {
-        // 繪製幫主專屬辦公圖案 (主管位)
-        const bossW = 100;
-        const bossH = 100;
-        ctx.drawImage(nexoraImg, screenX - bossW / 2, screenY - bossH + 20, bossW, bossH);
+        // 繪製幫主專屬辦公圖案 (主管位，放大兩倍且去背)
+        const bossW = 200;
+        const bossH = 200;
+        ctx.drawImage(nexoraImg, screenX - bossW / 2, screenY - bossH + 40, bossW, bossH);
     } else {
         // 繪製其他成員 (像素風小人)
         ctx.fillStyle = 'rgba(0,0,0,0.3)';
@@ -63,15 +63,15 @@ function drawMember(member) {
     ctx.textAlign = 'center';
     ctx.shadowBlur = 4;
     ctx.shadowColor = 'black';
-    ctx.fillText(member.name, screenX, screenY - (member.isBoss ? 85 : 60));
+    ctx.fillText(member.name, screenX, screenY - (member.isBoss ? 165 : 60));
     ctx.shadowBlur = 0;
     
     ctx.fillStyle = member.isBoss ? 'rgba(255, 215, 0, 0.9)' : 'rgba(255, 77, 77, 0.8)';
     const textWidth = ctx.measureText(member.role).width;
-    ctx.fillRect(screenX - (textWidth/2) - 5, screenY - (member.isBoss ? 80 : 55), textWidth + 10, 16);
+    ctx.fillRect(screenX - (textWidth/2) - 5, screenY - (member.isBoss ? 160 : 55), textWidth + 10, 16);
     ctx.fillStyle = member.isBoss ? '#000' : '#fff';
     ctx.font = 'bold 10px "Segoe UI"';
-    ctx.fillText(member.role, screenX, screenY - (member.isBoss ? 68 : 43));
+    ctx.fillText(member.role, screenX, screenY - (member.isBoss ? 148 : 43));
 }
 
 function render() {
