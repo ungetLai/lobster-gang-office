@@ -22,12 +22,15 @@ signalscoutImg.src = 'signalscout.png';
 const shadowledgerImg = new Image();
 shadowledgerImg.src = 'shadowledger.png';
 
+const shadowledgerOfflineImg = new Image();
+shadowledgerOfflineImg.src = 'shadowledger-offline.jpg';
+
 // 模擬成員資料
 const members = [
     { id: 'main', name: 'Nexora 🦞', x: 2, y: 3.2, color: '#ff4d4d', role: '龍蝦幫幫主', status: 'online', isBoss: true },
     { id: 'looploom', name: 'LoopLoom 🕷️', x: 2, y: 9, color: '#ff0000', role: '專案開發專家', status: 'online', isCustom: true, img: looploomImg },
     { id: 'signalscout', name: 'SignalScout 🦎', x: 2.3, y: 6.3, color: '#00ff00', role: '專案企劃大師', status: 'offline', isCustom: true, img: signalscoutImg },
-    { id: 'shadowledger', name: 'ShadowLedger 🦉', x: 6, y: 9, color: '#ffa500', role: '財務大總管', status: 'offline', isCustom: true, img: shadowledgerImg }
+    { id: 'shadowledger', name: 'ShadowLedger 🦉', x: 6, y: 9, color: '#ffa500', role: '財務大總管', status: 'offline', isCustom: true, img: shadowledgerImg, offlineImg: shadowledgerOfflineImg }
 ];
 
 function updateOnlineCount() {
@@ -59,7 +62,10 @@ function drawMember(member) {
     // 繪製離線半透明效果
     if (!isOnline) {
         ctx.globalAlpha = 0.5;
-        ctx.filter = 'grayscale(100%)';
+        // 如果有專屬離線圖案，就不套用灰階濾鏡，保持圖案原色
+        if (!member.offlineImg) {
+            ctx.filter = 'grayscale(100%)';
+        }
     }
 
     if (member.isBoss && nexoraImg.complete) {
@@ -67,11 +73,14 @@ function drawMember(member) {
         const bossW = 200;
         const bossH = 200;
         ctx.drawImage(nexoraImg, screenX - bossW / 2, screenY - bossH + 40, bossW, bossH);
-    } else if (member.isCustom && member.img.complete) {
-        // 繪製自定義成員 (如 LoopLoom)
-        const charW = 150;
-        const charH = 150;
-        ctx.drawImage(member.img, screenX - charW / 2, screenY - charH + 20, charW, charH);
+    } else if (member.isCustom) {
+        // 繪製自定義成員 (如 LoopLoom, ShadowLedger)
+        const imgToDraw = isOnline ? member.img : (member.offlineImg || member.img);
+        if (imgToDraw && imgToDraw.complete) {
+            const charW = 150;
+            const charH = 150;
+            ctx.drawImage(imgToDraw, screenX - charW / 2, screenY - charH + 20, charW, charH);
+        }
     } else {
         // 繪製其他成員 (像素風小人)
         ctx.fillStyle = 'rgba(0,0,0,0.3)';
