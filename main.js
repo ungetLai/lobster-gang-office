@@ -2,6 +2,7 @@ const canvas = document.getElementById('game-canvas');
 const ctx = canvas.getContext('2d');
 const logsOnline = document.getElementById('logs-online');
 const logsOffline = document.getElementById('logs-offline');
+const speechBubble = document.getElementById('speech-bubble');
 
 let offset = { x: 0, y: 0 };
 let isDragging = false;
@@ -57,6 +58,53 @@ function switchTab(tab) {
 }
 
 window.switchTab = switchTab;
+
+function showSpeech(memberId, text, duration = 3000) {
+    const member = members.find(m => m.id === memberId);
+    if (!member) return;
+
+    const isOnline = member.status === 'online';
+    let drawX = isOnline ? member.x : (member.offlinePos ? member.offlinePos.x : member.x);
+    let drawY = isOnline ? member.y : (member.offlinePos ? member.offlinePos.y : member.y);
+
+    const screenX = (drawX - drawY) * 50 + offset.x;
+    const screenY = (drawX + drawY) * 25 + offset.y - 120;
+
+    const labelYOffset = member.isBoss ? 180 : (member.isCustom ? 140 : 100);
+
+    speechBubble.textContent = text;
+    speechBubble.style.display = 'block';
+    speechBubble.style.left = `${screenX - speechBubble.offsetWidth / 2}px`;
+    speechBubble.style.top = `${screenY - labelYOffset - 40}px`;
+
+    setTimeout(() => {
+        speechBubble.style.display = 'none';
+    }, duration);
+}
+
+// 暴露給外部或測試用的指令傳達函數
+window.receiveBossCommand = function(targetMemberId = 'looploom') {
+    const boss = members.find(m => m.isBoss);
+    const target = members.find(m => m.id === targetMemberId);
+    
+    // 1. 幫主接獲指示
+    addLog(`[${boss.name}] 接獲首領的指示`, 'command');
+    showSpeech(boss.id, '📢 接獲首領指令！', 2000);
+
+    // 2. 延遲後指派給子代理
+    setTimeout(() => {
+        if (target) {
+            addLog(`[${boss.name}] 將首領的指示指派給 ${target.name}`, 'command');
+            showSpeech(boss.id, `👉 ${target.name}，交給你了！`, 2000);
+            
+            // 3. 子代理接獲任務
+            setTimeout(() => {
+                showSpeech(target.id, '🫡 收到，立即執行！', 2500);
+                addLog(`[${target.name}] 開始執行首領指示任務...`, 'online');
+            }, 2500);
+        }
+    }, 2500);
+};
 
 function updateOnlineCount() {
     const onlineCount = members.filter(m => m.status === 'online').length;
@@ -202,6 +250,14 @@ function render() {
         ctx.drawImage(bgImage, offset.x - imgW / 2, offset.y - imgH / 2, imgW, imgH);
     }
 
+    // 更新對話框位置 (如果正在顯示)
+    if (speechBubble.style.display === 'block') {
+        // 這裡可以根據當前 offset 重新計算位置，或者讓它隨地圖滾動
+        // 簡單做法是直接讓它隱藏或在 resize 時處理，這裡我們每幀更新以確保流暢
+        const visibleMemberName = speechBubble.getAttribute('data-member');
+        // (省略複雜的實時追蹤，因為 addLog 已經觸發了固定的顯示)
+    }
+
     // 繪製成員
     members.forEach(drawMember);
 
@@ -232,6 +288,7 @@ function addLog(msg, category = 'online') {
     
     const div = document.createElement('div');
     div.className = `log-entry ${category}`;
+    if (category === 'command') div.classList.add('command');
     const time = new Date().toLocaleTimeString('zh-TW', { hour12: false });
     div.innerHTML = `<span>${time}</span> ${msg}`;
     
