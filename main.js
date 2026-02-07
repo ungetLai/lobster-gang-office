@@ -50,6 +50,31 @@ function updateOnlineCount() {
     }
 }
 
+async function fetchMemberStatus() {
+    try {
+        const response = await fetch('/api/status');
+        const statuses = await response.json();
+        
+        let changed = false;
+        members.forEach(member => {
+            if (statuses[member.id] && member.status !== statuses[member.id]) {
+                member.status = statuses[member.id];
+                addLog(`[System] ${member.name} 狀態更新為 ${member.status}`);
+                changed = true;
+            }
+        });
+        
+        if (changed) {
+            updateOnlineCount();
+        }
+    } catch (err) {
+        console.error('Failed to fetch member status:', err);
+    }
+}
+
+// 每 10 秒檢查一次狀態
+setInterval(fetchMemberStatus, 10000);
+
 function resize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;

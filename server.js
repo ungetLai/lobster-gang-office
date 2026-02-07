@@ -7,8 +7,19 @@ const PORT = process.env.PORT || 3000;
 app.use(express.static(path.join(__dirname, './')));
 
 // 預留 API 介面：未來可以用來動態寫入 agents.json
-app.get('/api/status', (req, res) => {
-    res.json({ status: 'online', message: 'Lobster Gang Office is running' });
+app.get('/api/status', async (req, res) => {
+    try {
+        // 這裡回傳模擬的成員狀態，未來可以透過讀取 OpenClaw 的 session 或狀態檔案來更新
+        const statuses = {
+            'main': 'online',
+            'looploom': 'online',
+            'signalscout': 'offline',
+            'shadowledger': 'offline'
+        };
+        res.json(statuses);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 app.listen(PORT, () => {
