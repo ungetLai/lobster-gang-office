@@ -14,32 +14,32 @@ const nexoraImg = new Image();
 nexoraImg.src = 'nexora-boss.png';
 
 const nexoraOfflineImg = new Image();
-nexoraOfflineImg.src = 'nexora-offline.jpg';
+nexoraOfflineImg.src = 'nexora-offline.png';
 
 const looploomImg = new Image();
 looploomImg.src = 'looploom.png';
 
 const looploomOfflineImg = new Image();
-looploomOfflineImg.src = 'looploom-offline.jpg';
+looploomOfflineImg.src = 'looploom-offline.png';
 
 const signalscoutImg = new Image();
 signalscoutImg.src = 'signalscout.png';
 
 const signalscoutOfflineImg = new Image();
-signalscoutOfflineImg.src = 'signalscout-offline.jpg';
+signalscoutOfflineImg.src = 'signalscout-offline.png';
 
 const shadowledgerImg = new Image();
 shadowledgerImg.src = 'shadowledger.png';
 
 const shadowledgerOfflineImg = new Image();
-shadowledgerOfflineImg.src = 'shadowledger-offline.jpg';
+shadowledgerOfflineImg.src = 'shadowledger-offline.png';
 
 // 模擬成員資料
 const members = [
-    { id: 'main', name: 'Nexora 🦞', x: 2, y: 3.2, color: '#ff4d4d', role: '龍蝦幫幫主', status: 'online', isBoss: true, img: nexoraImg, offlineImg: nexoraOfflineImg, offlinePos: { x: 4.5, y: 3.2 } },
-    { id: 'looploom', name: 'LoopLoom 🕷️', x: 2, y: 9, color: '#ff0000', role: '專案開發專家', status: 'online', isCustom: true, img: looploomImg, offlineImg: looploomOfflineImg, offlinePos: { x: 4.5, y: 9 } },
-    { id: 'signalscout', name: 'SignalScout  Lizard', x: 2.3, y: 6.3, color: '#00ff00', role: '專案企劃大師', status: 'offline', isCustom: true, img: signalscoutImg, offlineImg: signalscoutOfflineImg, offlinePos: { x: 2.3, y: 9 } },
-    { id: 'shadowledger', name: 'ShadowLedger Owl', x: 6, y: 9, color: '#ffa500', role: '財務大總管', status: 'offline', isCustom: true, img: shadowledgerImg, offlineImg: shadowledgerOfflineImg }
+    { id: 'main', name: 'Nexora 🦞', x: 2, y: 3.2, color: '#ff4d4d', role: '龍蝦幫幫主', status: 'offline', isBoss: true, img: nexoraImg, offlineImg: nexoraOfflineImg, offlinePos: { x: 4.2, y: 1.2 } },
+    { id: 'looploom', name: 'LoopLoom 🕷️', x: 2, y: 9, color: '#ff0000', role: '專案開發專家', status: 'offline', isCustom: true, img: looploomImg, offlineImg: looploomOfflineImg, offlinePos: { x: 8, y: 7 } },
+    { id: 'signalscout', name: 'SignalScout 🦎', x: 2.3, y: 6.3, color: '#00ff00', role: '專案企劃大師', status: 'offline', isCustom: true, img: signalscoutImg, offlineImg: signalscoutOfflineImg, offlinePos: { x: 6.1, y: 4.2 } },
+    { id: 'shadowledger', name: 'ShadowLedger 🦉', x: 6, y: 9, color: '#ffa500', role: '財務大總管', status: 'offline', isCustom: true, img: shadowledgerImg, offlineImg: shadowledgerOfflineImg, offlinePos: { x: 9, y: 4 } },
 ];
 
 function updateOnlineCount() {
