@@ -6,6 +6,7 @@ const PORT = process.env.PORT || 3000;
 const fs = require('fs').promises;
 
 app.use(express.json());
+app.use(express.static(path.join(__dirname, './')));
 
 // 預留 API 介面：未來可以用來動態寫入 agents.json
 app.get('/api/status', async (req, res) => {
