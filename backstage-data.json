@@ -1,0 +1,22 @@
+{
+  "totalSessions": 0,
+  "totalInput": 1800,
+  "totalOutput": 420,
+  "totalCost": 0.000348,
+  "members": {
+    "Nexora 🦞": {
+      "name": "Nexora 🦞",
+      "sessions": 0,
+      "tokens": 2220,
+      "cost": 0.000348,
+      "tasks": 1
+    }
+  },
+  "moods": {
+    "Nexora 🦞": {
+      "agent": "Nexora 🦞",
+      "mood": "正在為龍蝦幫建立大數據中心，這是一份沉甸甸的責任！",
+      "onlineTime": "01:24:45"
+    }
+  }
+}
