@@ -24,7 +24,7 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid #333;
-            z-index: 10;
+            z-index: 1000;
         }
 
         #header h1 {
@@ -33,6 +33,218 @@
             color: #ff4d4d;
             text-transform: uppercase;
             letter-spacing: 2px;
+        }
+
+        #controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-backstage {
+            background: rgba(255, 77, 77, 0.2);
+            border: 1px solid #ff4d4d;
+            color: #ff4d4d;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .btn-backstage:hover {
+            background: #ff4d4d;
+            color: #fff;
+        }
+
+        /* 後台數據 Modal */
+        #backstage-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            padding: 40px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: #ff4d4d;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-close {
+            font-size: 2rem;
+            color: #888;
+            cursor: pointer;
+        }
+
+        .modal-tabs {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .modal-tab {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-tab.active {
+            background: #ff4d4d;
+            color: #fff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 儀表板樣式 */
+        .dashboard-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid #333;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #4da6ff;
+        }
+
+        .stat-value.cost {
+            color: #00ff88;
+        }
+
+        .stat-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .stat-table th, .stat-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+
+        .stat-table th {
+            background: rgba(255, 77, 77, 0.1);
+            color: #ff4d4d;
+        }
+
+        /* 員工心聲樣式 */
+        .staff-gate {
+            text-align: center;
+            max-width: 500px;
+            margin: 100px auto;
+            padding: 40px;
+            background: rgba(255, 77, 77, 0.05);
+            border: 2px solid #ff4d4d;
+            border-radius: 12px;
+        }
+
+        .staff-gate h2 {
+            color: #ff4d4d;
+            margin-bottom: 20px;
+        }
+
+        .staff-btns {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .btn-gate {
+            padding: 10px 30px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid #888;
+            background: none;
+            color: #fff;
+        }
+
+        .btn-gate.primary {
+            background: #ff4d4d;
+            border-color: #ff4d4d;
+        }
+
+        .recruitment {
+            margin-top: 30px;
+            color: #ffcc00;
+            font-style: italic;
+        }
+
+        .mood-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .mood-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 4px solid #ff4d4d;
+            padding: 20px;
+            border-radius: 4px;
+        }
+
+        .mood-agent {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .mood-time {
+            font-size: 0.8rem;
+            color: #00ff88;
+        }
+
+        .mood-text {
+            color: #ccc;
+            font-style: italic;
         }
 
         #game-container {
@@ -185,7 +397,95 @@
     <div id="header">
         <h1>🦞 Lobster Gang Office</h1>
         <div id="controls">
+            <button class="btn-backstage" onclick="openBackstage()">📊 系統後台數據</button>
             <span>[Nexora 🦞] 系統運行中...</span>
+        </div>
+    </div>
+
+    <div id="backstage-modal">
+        <div class="modal-header">
+            <div class="modal-title">🦞 龍蝦幫內部管理系統</div>
+            <div class="modal-close" onclick="closeBackstage()">&times;</div>
+        </div>
+        <div class="modal-tabs">
+            <div class="modal-tab active" onclick="switchBackstageTab('dashboard')">🏢 團隊儀表板</div>
+            <div class="modal-tab" onclick="switchBackstageTab('mood')">❤️ 員工心聲</div>
+        </div>
+
+        <!-- 團隊儀表板 -->
+        <div id="tab-dashboard" class="tab-content active">
+            <div class="dashboard-row">
+                <div class="stat-card">
+                    <div class="stat-label">今日對話數量</div>
+                    <div id="stat-sessions" class="stat-value">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">今日 Token 總量</div>
+                    <div id="stat-tokens" class="stat-value">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">今日 API 總花費</div>
+                    <div id="stat-total-cost" class="stat-value cost">$0.0000</div>
+                </div>
+            </div>
+            <div class="dashboard-row">
+                <div class="stat-card">
+                    <div class="stat-label">Input Tokens</div>
+                    <div id="stat-input" class="stat-value">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Output Tokens</div>
+                    <div id="stat-output" class="stat-value">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Cache Read</div>
+                    <div id="stat-cache" class="stat-value">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">API 花費 (USD)</div>
+                    <div id="stat-api-cost" class="stat-value cost">$0.0000</div>
+                </div>
+            </div>
+
+            <h3>📊 大家今天的表現</h3>
+            <table class="stat-table">
+                <thead>
+                    <tr>
+                        <th>成員</th>
+                        <th>對話數量</th>
+                        <th>Token 數量</th>
+                        <th>API 花費</th>
+                        <th>完成任務</th>
+                    </tr>
+                </thead>
+                <tbody id="member-stats-body">
+                    <!-- 由 JS 動態填入 -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 員工心聲 -->
+        <div id="tab-mood" class="tab-content">
+            <div id="staff-verification">
+                <div class="staff-gate">
+                    <h2>⚠️ 警告：機密區域</h2>
+                    <p>本區塊僅限龍蝦幫正式員工進入 (Staffs Only)。</p>
+                    <p>請問您是否為龍蝦幫成員？</p>
+                    <div class="staff-btns">
+                        <button class="btn-gate primary" onclick="verifyStaff(true)">是，我是員工</button>
+                        <button class="btn-gate" onclick="verifyStaff(false)">不，我只是路過</button>
+                    </div>
+                    <div id="recruitment-msg" class="recruitment" style="display:none;">
+                        🦞 既然不是員工，那還不快來應徵！<br>
+                        龍蝦幫正在招募人才，請洽幫主 Nexora。
+                    </div>
+                </div>
+            </div>
+            <div id="mood-content" style="display:none;">
+                <div class="mood-grid" id="mood-grid">
+                    <!-- 由 JS 動態填入 -->
+                </div>
+            </div>
         </div>
     </div>
 

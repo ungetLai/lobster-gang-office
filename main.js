@@ -320,6 +320,95 @@ function addLog(msg, category = 'online') {
     }
 }
 
+// --- 後台數據功能 ---
+const backstageModal = document.getElementById('backstage-modal');
+
+window.openBackstage = function() {
+    backstageModal.style.display = 'block';
+    fetchBackstageData();
+};
+
+window.closeBackstage = function() {
+    backstageModal.style.display = 'none';
+};
+
+window.switchBackstageTab = function(tab) {
+    document.querySelectorAll('.modal-tab').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    
+    if (tab === 'dashboard') {
+        document.querySelector('.modal-tab:nth-child(1)').classList.add('active');
+        document.getElementById('tab-dashboard').classList.add('active');
+    } else {
+        document.querySelector('.modal-tab:nth-child(2)').classList.add('active');
+        document.getElementById('tab-mood').classList.add('active');
+    }
+};
+
+window.verifyStaff = function(isStaff) {
+    const gate = document.getElementById('staff-verification');
+    const content = document.getElementById('mood-content');
+    const recruit = document.getElementById('recruitment-msg');
+    
+    if (isStaff) {
+        gate.style.display = 'none';
+        content.style.display = 'block';
+    } else {
+        recruit.style.display = 'block';
+    }
+};
+
+async function fetchBackstageData() {
+    try {
+        const response = await fetch('/api/backstage');
+        const data = await response.json();
+        
+        // 更新儀表板數據
+        document.getElementById('stat-sessions').textContent = data.totalSessions;
+        document.getElementById('stat-tokens').textContent = data.totalTokens.toLocaleString();
+        document.getElementById('stat-total-cost').textContent = `$${data.totalCost.toFixed(4)}`;
+        
+        document.getElementById('stat-input').textContent = data.totalInput.toLocaleString();
+        document.getElementById('stat-output').textContent = data.totalOutput.toLocaleString();
+        document.getElementById('stat-cache').textContent = data.totalCache.toLocaleString();
+        document.getElementById('stat-api-cost').textContent = `$${data.totalCost.toFixed(4)}`;
+
+        // 更新成員列表
+        const tbody = document.getElementById('member-stats-body');
+        tbody.innerHTML = '';
+        data.members.forEach(m => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${m.name}</td>
+                <td>${m.sessions}</td>
+                <td>${m.tokens.toLocaleString()}</td>
+                <td>$${m.cost.toFixed(4)}</td>
+                <td>${m.tasks}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        // 更新員工心聲
+        const grid = document.getElementById('mood-grid');
+        grid.innerHTML = '';
+        data.moods.forEach(m => {
+            const card = document.createElement('div');
+            card.className = 'mood-card';
+            card.innerHTML = `
+                <div class="mood-agent">
+                    <span>${m.agent}</span>
+                    <span class="mood-time">⏱️ 上線 ${m.onlineTime}</span>
+                </div>
+                <div class="mood-text">"${m.mood}"</div>
+            `;
+            grid.appendChild(card);
+        });
+
+    } catch (err) {
+        console.error('Failed to fetch backstage data:', err);
+    }
+}
+
 setInterval(() => {
     const onlineMembers = members.filter(m => m.status === 'online');
     const offlineMembers = members.filter(m => m.status !== 'online');
