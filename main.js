@@ -19,6 +19,9 @@ nexoraOfflineImg.src = 'nexora-offline.jpg';
 const looploomImg = new Image();
 looploomImg.src = 'looploom.png';
 
+const looploomOfflineImg = new Image();
+looploomOfflineImg.src = 'looploom-offline.jpg';
+
 const signalscoutImg = new Image();
 signalscoutImg.src = 'signalscout.png';
 
@@ -34,7 +37,7 @@ shadowledgerOfflineImg.src = 'shadowledger-offline.jpg';
 // 模擬成員資料
 const members = [
     { id: 'main', name: 'Nexora 🦞', x: 2, y: 3.2, color: '#ff4d4d', role: '龍蝦幫幫主', status: 'online', isBoss: true, img: nexoraImg, offlineImg: nexoraOfflineImg, offlinePos: { x: 4.5, y: 3.2 } },
-    { id: 'looploom', name: 'LoopLoom 🕷️', x: 2, y: 9, color: '#ff0000', role: '專案開發專家', status: 'online', isCustom: true, img: looploomImg },
+    { id: 'looploom', name: 'LoopLoom 🕷️', x: 2, y: 9, color: '#ff0000', role: '專案開發專家', status: 'online', isCustom: true, img: looploomImg, offlineImg: looploomOfflineImg, offlinePos: { x: 4.5, y: 9 } },
     { id: 'signalscout', name: 'SignalScout  Lizard', x: 2.3, y: 6.3, color: '#00ff00', role: '專案企劃大師', status: 'offline', isCustom: true, img: signalscoutImg, offlineImg: signalscoutOfflineImg, offlinePos: { x: 2.3, y: 9 } },
     { id: 'shadowledger', name: 'ShadowLedger Owl', x: 6, y: 9, color: '#ffa500', role: '財務大總管', status: 'offline', isCustom: true, img: shadowledgerImg, offlineImg: shadowledgerOfflineImg }
 ];
