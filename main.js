@@ -13,6 +13,9 @@ bgImage.src = 'office-bg.jpg';
 const nexoraImg = new Image();
 nexoraImg.src = 'nexora-boss.png';
 
+const nexoraOfflineImg = new Image();
+nexoraOfflineImg.src = 'nexora-offline.jpg';
+
 const looploomImg = new Image();
 looploomImg.src = 'looploom.png';
 
@@ -30,7 +33,7 @@ shadowledgerOfflineImg.src = 'shadowledger-offline.jpg';
 
 // 模擬成員資料
 const members = [
-    { id: 'main', name: 'Nexora 🦞', x: 2, y: 3.2, color: '#ff4d4d', role: '龍蝦幫幫主', status: 'online', isBoss: true },
+    { id: 'main', name: 'Nexora 🦞', x: 2, y: 3.2, color: '#ff4d4d', role: '龍蝦幫幫主', status: 'online', isBoss: true, img: nexoraImg, offlineImg: nexoraOfflineImg, offlinePos: { x: 4.5, y: 3.2 } },
     { id: 'looploom', name: 'LoopLoom 🕷️', x: 2, y: 9, color: '#ff0000', role: '專案開發專家', status: 'online', isCustom: true, img: looploomImg },
     { id: 'signalscout', name: 'SignalScout  Lizard', x: 2.3, y: 6.3, color: '#00ff00', role: '專案企劃大師', status: 'offline', isCustom: true, img: signalscoutImg, offlineImg: signalscoutOfflineImg, offlinePos: { x: 2.3, y: 9 } },
     { id: 'shadowledger', name: 'ShadowLedger Owl', x: 6, y: 9, color: '#ffa500', role: '財務大總管', status: 'offline', isCustom: true, img: shadowledgerImg, offlineImg: shadowledgerOfflineImg }
@@ -80,11 +83,14 @@ function drawMember(member) {
         }
     }
 
-    if (member.isBoss && nexoraImg.complete) {
+    if (member.isBoss) {
         // 繪製幫主專屬辦公圖案 (主管位，放大兩倍且去背)
-        const bossW = 200;
-        const bossH = 200;
-        ctx.drawImage(nexoraImg, screenX - bossW / 2, screenY - bossH + 40, bossW, bossH);
+        const imgToDraw = isOnline ? member.img : (member.offlineImg || member.img);
+        if (imgToDraw && imgToDraw.complete) {
+            const bossW = 200;
+            const bossH = 200;
+            ctx.drawImage(imgToDraw, screenX - bossW / 2, screenY - bossH + 40, bossW, bossH);
+        }
     } else if (member.isCustom) {
         // 繪製自定義成員 (如 LoopLoom, ShadowLedger)
         const imgToDraw = isOnline ? member.img : (member.offlineImg || member.img);
