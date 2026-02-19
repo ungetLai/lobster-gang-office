@@ -10,7 +10,14 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, './')));
 
 // 初始化資料庫
-initDB().catch(err => console.error('Database initialization failed:', err));
+console.log('🦞 Attempting to initialize database...');
+initDB()
+    .then(() => console.log('✅ Database initialization complete.'))
+    .catch(err => {
+        console.error('❌ Database initialization failed:', err);
+        // 在生產環境中，如果資料庫沒連上，我們可能不希望服務直接掛掉，
+        // 但至少要讓日誌看得到錯誤。
+    });
 
 // 獲取狀態 (保持原有邏輯，但可考慮未來移入 DB)
 app.get('/api/status', async (req, res) => {
