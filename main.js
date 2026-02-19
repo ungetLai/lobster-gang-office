@@ -14,31 +14,31 @@ const socket = io();
 
 // 載入資源
 const bgImage = new Image();
-bgImage.src = 'office-bg.jpg';
+bgImage.src = 'assets/office-bg.jpg';
 
 const nexoraImg = new Image();
-nexoraImg.src = 'nexora-boss.png';
+nexoraImg.src = 'assets/nexora-boss.png';
 
 const nexoraOfflineImg = new Image();
-nexoraOfflineImg.src = 'nexora-offline.png';
+nexoraOfflineImg.src = 'assets/nexora-offline.png';
 
 const looploomImg = new Image();
-looploomImg.src = 'looploom.png';
+looploomImg.src = 'assets/looploom.png';
 
 const looploomOfflineImg = new Image();
-looploomOfflineImg.src = 'looploom-offline.png';
+looploomOfflineImg.src = 'assets/looploom-offline.png';
 
 const signalscoutImg = new Image();
-signalscoutImg.src = 'signalscout.png';
+signalscoutImg.src = 'assets/signalscout.png';
 
 const signalscoutOfflineImg = new Image();
-signalscoutOfflineImg.src = 'signalscout-offline.png';
+signalscoutOfflineImg.src = 'assets/signalscout-offline.png';
 
 const shadowledgerImg = new Image();
-shadowledgerImg.src = 'shadowledger.png';
+shadowledgerImg.src = 'assets/shadowledger.png';
 
 const shadowledgerOfflineImg = new Image();
-shadowledgerOfflineImg.src = 'shadowledger-offline.png';
+shadowledgerOfflineImg.src = 'assets/shadowledger-offline.png';
 
 // 成員資料
 const members = [

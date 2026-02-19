@@ -1,4 +1,4 @@
-const { pool } = require('./db');
+const { pool } = require('../db');
 
 async function migrate() {
   console.log('🦞 Starting manual migration...');

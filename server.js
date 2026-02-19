@@ -27,7 +27,7 @@ io.on('connection', (socket) => {
 // 獲取狀態
 app.get('/api/status', async (req, res) => {
     try {
-        const data = await fs.readFile(path.join(__dirname, 'status.json'), 'utf8');
+        const data = await fs.readFile(path.join(__dirname, 'data/status.json'), 'utf8');
         res.json(JSON.parse(data));
     } catch (err) {
         res.json({
