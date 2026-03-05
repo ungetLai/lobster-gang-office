@@ -410,6 +410,7 @@
         <div class="modal-tabs">
             <div class="modal-tab active" onclick="switchBackstageTab('dashboard')">🏢 團隊儀表板</div>
             <div class="modal-tab" onclick="switchBackstageTab('mood')">❤️ 員工心聲</div>
+            <div class="modal-tab" onclick="switchBackstageTab('daily')">📝 昨日小記</div>
         </div>
 
         <!-- 團隊儀表板 -->
@@ -485,6 +486,19 @@
                 <div class="mood-grid" id="mood-grid">
                     <!-- 由 JS 動態填入 -->
                 </div>
+            </div>
+        </div>
+
+        <!-- 昨日小記 -->
+        <div id="tab-daily" class="tab-content">
+            <h3>📝 昨日工作摘要</h3>
+            <div id="yesterday-summary" class="dashboard-row">
+                <!-- 由 JS 動態填入 -->
+            </div>
+            <h3>📈 7日趨勢</h3>
+            <div id="trend-chart">
+                <!-- 控制台輸出趨勢數據 -->
+                <p style="color: #888;">請開啟開發者工具查看趨勢數據</p>
             </div>
         </div>
     </div>

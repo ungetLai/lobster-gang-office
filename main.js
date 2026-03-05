@@ -359,7 +359,7 @@ window.closeBackstage = function() {
 window.switchBackstageTab = function(tab) {
     document.querySelectorAll('.modal-tab').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-    const idx = tab === 'dashboard' ? 1 : 2;
+    const idx = tab === 'dashboard' ? 1 : (tab === 'mood' ? 2 : 3);
     document.querySelector(`.modal-tab:nth-child(${idx})`).classList.add('active');
     document.getElementById(`tab-${tab}`).classList.add('active');
 };
