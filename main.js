@@ -42,11 +42,30 @@ shadowledgerOfflineImg.src = 'assets/shadowledger-offline.png';
 
 // 成員資料
 const members = [
-    { id: 'main', name: 'Nexora 🦞', x: 2, y: 3.2, color: '#ff4d4d', role: '龍蝦幫幫主', status: 'offline', isBoss: true, img: nexoraImg, offlineImg: nexoraOfflineImg, offlinePos: { x: 4.2, y: 1.2 } },
-    { id: 'looploom', name: 'LoopLoom 🕷️', x: 2, y: 9, color: '#ff0000', role: '專案開發專家', status: 'offline', isCustom: true, img: looploomImg, offlineImg: looploomOfflineImg, offlinePos: { x: 8, y: 7 } },
-    { id: 'signalscout', name: 'SignalScout 蜥', x: 2.3, y: 6.3, color: '#00ff00', role: '專案企劃大師', status: 'offline', isCustom: true, img: signalscoutImg, offlineImg: signalscoutOfflineImg, offlinePos: { x: 6.1, y: 4.2 } },
-    { id: 'shadowledger', name: 'ShadowLedger 🦉', x: 6, y: 9, color: '#ffa500', role: '財務大總管', status: 'offline', isCustom: true, img: shadowledgerImg, offlineImg: shadowledgerOfflineImg, offlinePos: { x: 9, y: 4 } },
+    { id: 'main', name: 'Nexora 🦞', x: 2, y: 3.2, color: '#ff4d4d', role: '龍蝦幫幫主', status: 'offline', agentStatus: 'idle', isBoss: true, img: nexoraImg, offlineImg: nexoraOfflineImg, offlinePos: { x: 4.2, y: 1.2 } },
+    { id: 'looploom', name: 'LoopLoom 🕷️', x: 2, y: 9, color: '#ff0000', role: '專案開發專家', status: 'offline', agentStatus: 'idle', isCustom: true, img: looploomImg, offlineImg: looploomOfflineImg, offlinePos: { x: 8, y: 7 } },
+    { id: 'signalscout', name: 'SignalScout 蜥', x: 2.3, y: 6.3, color: '#00ff00', role: '專案企劃大師', status: 'offline', agentStatus: 'idle', isCustom: true, img: signalscoutImg, offlineImg: signalscoutOfflineImg, offlinePos: { x: 6.1, y: 4.2 } },
+    { id: 'shadowledger', name: 'ShadowLedger 🦉', x: 6, y: 9, color: '#ffa500', role: '財務大總管', status: 'offline', agentStatus: 'idle', isCustom: true, img: shadowledgerImg, offlineImg: shadowledgerOfflineImg, offlinePos: { x: 9, y: 4 } },
 ];
+
+// Agent 狀態顏色映射
+const statusColors = {
+    idle: '#00ff00',      // 綠色
+    writing: '#3399ff',   // 藍色
+    researching: '#9966ff', // 紫色
+    executing: '#ff9900', // 橙色
+    syncing: '#00cccc',   // 青色
+    error: '#ff3333'      // 紅色
+};
+
+const statusEmojis = {
+    idle: '🟢',
+    writing: '🔵',
+    researching: '🔍',
+    executing: '⚙️',
+    syncing: '🔄',
+    error: '🔴'
+};
 
 // Socket 事件監聽
 socket.on('sync_update', (data) => {
@@ -56,6 +75,10 @@ socket.on('sync_update', (data) => {
             member.status = 'online';
             addLog(`[System] ${member.name} 🟢 偵測到活動，自動進入在線模式`, 'system');
             updateOnlineCount();
+        }
+        // 更新 Agent 狀態
+        if (data.status) {
+            member.agentStatus = data.status;
         }
         // 增加系統負載感
         systemLoad = Math.min(1.0, systemLoad + (data.output / 5000));
@@ -216,6 +239,18 @@ function drawMember(member) {
     const screenX = (drawX - drawY) * 50 + offset.x;
     const screenY = (drawX + drawY) * 25 + offset.y - 120;
 
+    // 繪製狀態光暈 (僅在線時顯示)
+    if (isOnline && member.agentStatus) {
+        const statusColor = statusColors[member.agentStatus] || statusColors.idle;
+        const gradient = ctx.createRadialGradient(screenX, screenY - 50, 0, screenX, screenY - 50, 80);
+        gradient.addColorStop(0, statusColor + '80');
+        gradient.addColorStop(1, 'transparent');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(screenX, screenY - 50, 80, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
     if (!isOnline) {
         ctx.globalAlpha = 0.5;
         if (!member.offlineImg) ctx.filter = 'grayscale(100%)';
@@ -246,7 +281,15 @@ function drawMember(member) {
     ctx.arc(screenX - (nameWidth / 2) - 15, screenY - labelYOffset - 5, 5, 0, Math.PI * 2);
     ctx.fill();
 
+    // 顯示 Agent 狀態圖示 (僅在線時)
+    if (isOnline && member.agentStatus) {
+        const statusEmoji = statusEmojis[member.agentStatus] || statusEmojis.idle;
+        ctx.font = '12px "Segoe UI"';
+        ctx.fillText(statusEmoji, screenX + (nameWidth / 2) + 15, screenY - labelYOffset - 2);
+    }
+
     ctx.fillStyle = '#fff';
+    ctx.font = 'bold 14px "Segoe UI"';
     ctx.fillText(member.name, screenX, screenY - labelYOffset);
     ctx.shadowBlur = 0;
 
@@ -316,7 +359,7 @@ window.closeBackstage = function() {
 window.switchBackstageTab = function(tab) {
     document.querySelectorAll('.modal-tab').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-    const idx = tab === 'dashboard' ? 1 : 2;
+    const idx = tab === 'dashboard' ? 1 : (tab === 'mood' ? 2 : 3);
     document.querySelector(`.modal-tab:nth-child(${idx})`).classList.add('active');
     document.getElementById(`tab-${tab}`).classList.add('active');
 };
@@ -356,11 +399,44 @@ async function fetchBackstageData() {
             <div class="mood-card">
                 <div class="mood-agent">
                     <span>${m.agent}</span>
+                    <span class="mood-status" style="color: ${statusColors[m.status] || statusColors.idle}">${statusEmojis[m.status] || statusEmojis.idle} ${m.status}</span>
                     <span class="mood-time">⏱️ 上線 ${m.onlineTime}</span>
                 </div>
                 <div class="mood-text">"${m.mood}"</div>
             </div>
         `).join('');
+
+        // 獲取每日摘要數據
+        fetchDailySummary();
+    } catch (err) {}
+}
+
+async function fetchDailySummary() {
+    try {
+        const response = await fetch('/api/backstage/daily?days=7');
+        const data = await response.json();
+        
+        // 更新昨日摘要
+        const yesterdayDiv = document.getElementById('yesterday-summary');
+        if (yesterdayDiv && data.summary) {
+            yesterdayDiv.innerHTML = `
+                <div class="stat-item">
+                    <span class="stat-label">對話次數</span>
+                    <span class="stat-value">${data.summary.totalSessions}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">消耗 Tokens</span>
+                    <span class="stat-value">${data.summary.totalTokens.toLocaleString()}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">完成任務</span>
+                    <span class="stat-value">${data.summary.totalTasks}</span>
+                </div>
+            `;
+        }
+
+        // 更新趨勢圖 (控制台輸出，實際可用 Chart.js)
+        console.log('7日趨勢數據:', data.trend);
     } catch (err) {}
 }
 
