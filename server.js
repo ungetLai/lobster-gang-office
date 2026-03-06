@@ -106,14 +106,22 @@ app.post('/api/backstage/sync', async (req, res) => {
         `, [agentId, sessionsInc, input + output, cost, taskInc]);
 
         if (mood || status || onlineTime) {
+            // 檢查是否為 mood 更新（需要更新 mood_created_at）
+            const isMoodUpdate = mood && mood !== "穩定運作中";
+            
             await client.query(`
-                INSERT INTO moods (agent_id, mood, status, online_time, updated_at)
-                VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
+                INSERT INTO moods (agent_id, mood, status, online_time, updated_at, mood_created_at)
+                VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, ${isMoodUpdate ? 'CURRENT_TIMESTAMP' : 'moods.mood_created_at'})
                 ON CONFLICT (agent_id) DO UPDATE 
                 SET mood = COALESCE(EXCLUDED.mood, moods.mood),
                     status = COALESCE(EXCLUDED.status, moods.status),
                     online_time = COALESCE(EXCLUDED.online_time, moods.online_time),
-                    updated_at = CURRENT_TIMESTAMP
+                    updated_at = CURRENT_TIMESTAMP,
+                    mood_created_at = CASE 
+                        WHEN EXCLUDED.mood IS NOT NULL AND EXCLUDED.mood <> '穩定運作中' 
+                        THEN COALESCE(moods.mood_created_at, CURRENT_TIMESTAMP) 
+                        ELSE moods.mood_created_at 
+                    END
             `, [agentId, mood || "穩定運作中", status || "idle", onlineTime || "00:00:00"]);
         }
 
@@ -180,7 +188,7 @@ app.get('/api/backstage', async (req, res) => {
                 mood: m.mood,
                 status: m.status || 'idle',
                 onlineTime: m.online_time,
-                timestamp: m.updated_at ? new Date(m.updated_at).toLocaleString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : null
+                timestamp: m.mood_created_at ? new Date(m.mood_created_at).toLocaleString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : (m.updated_at ? new Date(m.updated_at).toLocaleString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : null)
             }))
         });
     } catch (err) {
