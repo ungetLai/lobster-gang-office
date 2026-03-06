@@ -179,7 +179,8 @@ app.get('/api/backstage', async (req, res) => {
                 agent: m.agent_id,
                 mood: m.mood,
                 status: m.status || 'idle',
-                onlineTime: m.online_time
+                onlineTime: m.online_time,
+                timestamp: m.updated_at ? new Date(m.updated_at).toLocaleString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : null
             }))
         });
     } catch (err) {
