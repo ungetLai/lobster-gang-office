@@ -403,6 +403,7 @@ async function fetchBackstageData() {
                     <span class="mood-time">⏱️ 上線 ${m.onlineTime}</span>
                 </div>
                 <div class="mood-text">"${m.mood}"</div>
+                ${m.timestamp ? `<div class="mood-timestamp">📅 ${m.timestamp}</div>` : ''}
             </div>
         `).join('');
 
