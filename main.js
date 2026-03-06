@@ -395,6 +395,20 @@ async function fetchBackstageData() {
         `).join('');
 
         const grid = document.getElementById('mood-grid');
+        
+        // 格式化時間戳記函數
+        const formatMoodTime = (timestamp) => {
+            if (!timestamp) return '';
+            const date = new Date(timestamp);
+            return date.toLocaleString('zh-TW', { 
+                year: 'numeric', 
+                month: '2-digit', 
+                day: '2-digit',
+                hour: '2-digit', 
+                minute: '2-digit'
+            });
+        };
+        
         grid.innerHTML = data.moods.map(m => `
             <div class="mood-card">
                 <div class="mood-agent">
@@ -403,6 +417,7 @@ async function fetchBackstageData() {
                     <span class="mood-time">⏱️ 上線 ${m.onlineTime}</span>
                 </div>
                 <div class="mood-text">"${m.mood}"</div>
+                ${m.moodTimestamp ? `<div class="mood-timestamp">📅 ${formatMoodTime(m.moodTimestamp)}</div>` : ''}
             </div>
         `).join('');
 

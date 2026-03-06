@@ -106,15 +106,21 @@ app.post('/api/backstage/sync', async (req, res) => {
         `, [agentId, sessionsInc, input + output, cost, taskInc]);
 
         if (mood || status || onlineTime) {
+            // 當 mood 有更新時，自動記錄時間戳
+            const moodTimestamp = mood ? new Date().toISOString() : null;
             await client.query(`
-                INSERT INTO moods (agent_id, mood, status, online_time, updated_at)
-                VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
+                INSERT INTO moods (agent_id, mood, status, online_time, mood_timestamp, updated_at)
+                VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP)
                 ON CONFLICT (agent_id) DO UPDATE 
                 SET mood = COALESCE(EXCLUDED.mood, moods.mood),
                     status = COALESCE(EXCLUDED.status, moods.status),
                     online_time = COALESCE(EXCLUDED.online_time, moods.online_time),
+                    mood_timestamp = CASE 
+                        WHEN EXCLUDED.mood IS NOT NULL THEN EXCLUDED.mood_timestamp 
+                        ELSE moods.mood_timestamp 
+                    END,
                     updated_at = CURRENT_TIMESTAMP
-            `, [agentId, mood || "穩定運作中", status || "idle", onlineTime || "00:00:00"]);
+            `, [agentId, mood || "穩定運作中", status || "idle", onlineTime || "00:00:00", moodTimestamp]);
         }
 
         // 更新每日統計
@@ -179,7 +185,8 @@ app.get('/api/backstage', async (req, res) => {
                 agent: m.agent_id,
                 mood: m.mood,
                 status: m.status || 'idle',
-                onlineTime: m.online_time
+                onlineTime: m.online_time,
+                moodTimestamp: m.mood_timestamp  // 新增：心情語錄時間戳
             }))
         });
     } catch (err) {

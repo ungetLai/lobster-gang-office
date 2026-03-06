@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS moods (
     mood TEXT,
     status VARCHAR(20) DEFAULT 'idle',
     online_time INTERVAL,
+    mood_timestamp TIMESTAMP,  -- 心情語錄時間戳記
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
