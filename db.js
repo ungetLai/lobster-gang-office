@@ -30,7 +30,28 @@ async function initDB() {
       CREATE TABLE IF NOT EXISTS moods (
           agent_id VARCHAR(50) PRIMARY KEY,
           mood TEXT,
+          status VARCHAR(20) DEFAULT 'idle',
           online_time VARCHAR(20),
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          mood_created_at TIMESTAMP DEFAULT NULL
+      );
+    `);
+    
+    // 新增 mood_created_at 欄位（如果不存在）
+    await client.query(`
+      ALTER TABLE moods ADD COLUMN IF NOT EXISTS mood_created_at TIMESTAMP DEFAULT NULL;
+    `);
+    
+    // 建立 agent_status 表
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS agent_status (
+          agent_id VARCHAR(50) PRIMARY KEY,
+          presence_status VARCHAR(20) DEFAULT 'offline',
+          activity_status VARCHAR(20) DEFAULT 'idle',
+          last_seen_at TIMESTAMP,
+          current_task_id VARCHAR(100),
+          current_task_type VARCHAR(50),
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);

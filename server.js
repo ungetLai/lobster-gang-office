@@ -106,14 +106,22 @@ app.post('/api/backstage/sync', async (req, res) => {
         `, [agentId, sessionsInc, input + output, cost, taskInc]);
 
         if (mood || status || onlineTime) {
+            // 檢查是否為 mood 更新（需要更新 mood_created_at）
+            const isMoodUpdate = mood && mood !== "穩定運作中";
+            
             await client.query(`
-                INSERT INTO moods (agent_id, mood, status, online_time, updated_at)
-                VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
+                INSERT INTO moods (agent_id, mood, status, online_time, updated_at, mood_created_at)
+                VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, ${isMoodUpdate ? 'CURRENT_TIMESTAMP' : 'moods.mood_created_at'})
                 ON CONFLICT (agent_id) DO UPDATE 
                 SET mood = COALESCE(EXCLUDED.mood, moods.mood),
                     status = COALESCE(EXCLUDED.status, moods.status),
                     online_time = COALESCE(EXCLUDED.online_time, moods.online_time),
-                    updated_at = CURRENT_TIMESTAMP
+                    updated_at = CURRENT_TIMESTAMP,
+                    mood_created_at = CASE 
+                        WHEN EXCLUDED.mood IS NOT NULL AND EXCLUDED.mood <> '穩定運作中' 
+                        THEN COALESCE(moods.mood_created_at, CURRENT_TIMESTAMP) 
+                        ELSE moods.mood_created_at 
+                    END
             `, [agentId, mood || "穩定運作中", status || "idle", onlineTime || "00:00:00"]);
         }
 
@@ -180,7 +188,7 @@ app.get('/api/backstage', async (req, res) => {
                 mood: m.mood,
                 status: m.status || 'idle',
                 onlineTime: m.online_time,
-                timestamp: m.updated_at ? new Date(m.updated_at).toLocaleString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : null
+                timestamp: m.mood_created_at ? new Date(m.mood_created_at).toLocaleString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : (m.updated_at ? new Date(m.updated_at).toLocaleString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : null)
             }))
         });
     } catch (err) {
@@ -247,6 +255,76 @@ app.get('/api/backstage/daily', async (req, res) => {
     } catch (err) {
         console.error('Fetch daily error:', err);
         res.status(500).json({ error: err.message });
+    }
+});
+
+// Agent Status API - 更新 agent 狀態
+app.post('/api/agent/status', async (req, res) => {
+    const { agents, mood, system } = req.body;
+    const timestamp = new Date().toISOString();
+    const client = await pool.connect();
+    
+    try {
+        await client.query('BEGIN');
+        
+        // 更新 agents 狀態
+        if (agents && typeof agents === 'object') {
+            for (const [key, agentData] of Object.entries(agents)) {
+                const { agent_id, presence_status, activity_status, last_seen_at, current_task_id, current_task_type } = agentData;
+                
+                await client.query(`
+                    INSERT INTO agent_status (agent_id, presence_status, activity_status, last_seen_at, current_task_id, current_task_type, updated_at)
+                    VALUES ($1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP)
+                    ON CONFLICT (agent_id) DO UPDATE 
+                    SET presence_status = COALESCE(EXCLUDED.presence_status, agent_status.presence_status),
+                        activity_status = COALESCE(EXCLUDED.activity_status, agent_status.activity_status),
+                        last_seen_at = COALESCE(EXCLUDED.last_seen_at, agent_status.last_seen_at),
+                        current_task_id = EXCLUDED.current_task_id,
+                        current_task_type = EXCLUDED.current_task_type,
+                        updated_at = CURRENT_TIMESTAMP
+                `, [agent_id, presence_status, activity_status, last_seen_at, current_task_id, current_task_type]);
+            }
+        }
+        
+        // 更新 moods 狀態
+        if (mood && Array.isArray(mood)) {
+            for (const m of mood) {
+                const { name, status, statusIcon, uptime, quote, updatedAt } = m;
+                const moodText = quote || status;
+                
+                await client.query(`
+                    INSERT INTO moods (agent_id, mood, status, online_time, updated_at, mood_created_at)
+                    VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+                    ON CONFLICT (agent_id) DO UPDATE 
+                    SET mood = COALESCE(EXCLUDED.mood, moods.mood),
+                        status = COALESCE(EXCLUDED.status, moods.status),
+                        online_time = COALESCE(EXCLUDED.online_time, moods.online_time),
+                        updated_at = CURRENT_TIMESTAMP
+                `, [name, moodText, status, uptime]);
+            }
+        }
+        
+        // 更新 system 狀態（目前只記錄到日誌，未來可擴充）
+        if (system) {
+            console.log(`📊 System status update:`, system);
+        }
+        
+        await client.query('COMMIT');
+        
+        // 即時通知前端
+        io.emit('agent_status_update', { agents, mood, system, timestamp });
+        
+        res.json({ 
+            success: true, 
+            message: 'Status updated', 
+            timestamp 
+        });
+    } catch (err) {
+        await client.query('ROLLBACK');
+        console.error('Agent status update error:', err);
+        res.status(500).json({ success: false, error: err.message });
+    } finally {
+        client.release();
     }
 });
 
