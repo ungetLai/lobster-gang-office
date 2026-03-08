@@ -42,6 +42,20 @@ async function initDB() {
       ALTER TABLE moods ADD COLUMN IF NOT EXISTS mood_created_at TIMESTAMP DEFAULT NULL;
     `);
     
+    // 建立 agent_status 表
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS agent_status (
+          agent_id VARCHAR(50) PRIMARY KEY,
+          presence_status VARCHAR(20) DEFAULT 'offline',
+          activity_status VARCHAR(20) DEFAULT 'idle',
+          last_seen_at TIMESTAMP,
+          current_task_id VARCHAR(100),
+          current_task_type VARCHAR(50),
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    
     // 初始化一條 system_stats 資料
     const res = await client.query('SELECT COUNT(*) FROM system_stats');
     if (parseInt(res.rows[0].count) === 0) {
