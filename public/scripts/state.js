@@ -1,0 +1,1 @@
+window.OfficeState={members:[],timeline:[],dashboard:null,selectedMemberId:null,activeTimelineFilter:'all',setMembers(m){this.members=m;},setDashboard(d){this.dashboard=d;},pushEvent(evt){this.timeline.unshift(evt);if(this.timeline.length>80)this.timeline.pop();},selectMember(id){this.selectedMemberId=id;},setFilter(filter){this.activeTimelineFilter=filter;}};

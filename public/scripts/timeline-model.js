@@ -1,0 +1,1 @@
+window.TimelineModel={types:{system:'系統',command:'命令',sync:'同步',mood:'心情',alert:'警示',achievement:'戰功'},create(type,summary,meta={}){return{id:`evt_${Date.now()}_${Math.random().toString(36).slice(2,8)}`,type,summary,meta,createdAt:Date.now()};}};

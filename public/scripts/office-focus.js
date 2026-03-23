@@ -1,0 +1,1 @@
+window.OfficeFocus={apply(){const focus=new URLSearchParams(location.search).get('focus');return focus||null;}};

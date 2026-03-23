@@ -1,0 +1,1 @@
+window.OfficeApi={async getStatus(){const r=await fetch('/api/status');return r.json();},async getBackstage(){const r=await fetch('/api/backstage');return r.json();},async getDaily(days=7){const r=await fetch(`/api/backstage/daily?days=${days}`);return r.json();}};

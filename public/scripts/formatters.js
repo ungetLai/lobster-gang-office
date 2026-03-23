@@ -1,0 +1,1 @@
+window.OfficeFormatters={time(v){try{return new Date(v||Date.now()).toLocaleTimeString('zh-TW',{hour12:false});}catch{return '--:--:--';}},number(v){return Number(v||0).toLocaleString('zh-TW');},money(v){return `$${Number(v||0).toFixed(4)}`;}};
