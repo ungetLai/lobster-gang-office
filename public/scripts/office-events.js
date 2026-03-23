@@ -1,0 +1,1 @@
+window.OfficeEvents=(function(){function bindFilters(onChange){document.querySelectorAll('.filter-btn').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));btn.classList.add('active');onChange(btn.dataset.filter);}));}return{bindFilters};})();

@@ -11,7 +11,16 @@ const io = new Server(server);
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, './')));
+
+app.get('/dashboard', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dashboard.html'));
+});
+
+app.get('/agent', (req, res) => {
+    res.sendFile(path.join(__dirname, 'agent.html'));
+});
 
 // 初始化資料庫
 initDB().catch(err => console.error('Database initialization failed:', err));

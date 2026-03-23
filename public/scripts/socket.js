@@ -1,0 +1,1 @@
+window.OfficeSocket=function(){const socket=io();window.__officeSocket=socket;return socket;};

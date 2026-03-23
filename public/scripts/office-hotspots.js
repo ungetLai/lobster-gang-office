@@ -1,0 +1,1 @@
+window.OfficeHotspots=[{id:'main',label:'指揮台',x:2,y:3.2,summary:'查看公告、命令與整體團隊概況'},{id:'looploom',label:'開發區',x:2,y:9,summary:'查看交付、執行與開發節奏'},{id:'signalscout',label:'情報區',x:2.3,y:6.3,summary:'查看觀測、分析與訊號變化'},{id:'shadowledger',label:'財務區',x:6,y:9,summary:'查看成本、資源與消耗節奏'},{id:'warroom',label:'戰情室入口',x:7.3,y:3.5,summary:'切換到正式戰情板視角'}];
